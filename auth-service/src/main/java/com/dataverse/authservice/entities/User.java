@@ -25,6 +25,9 @@ public class User{
     @Column(name = "username", nullable = false)
     private String username;
 
+    @Column(name = "firstName", nullable = false)
+    private String firstName;
+
     @Column(name = "secondName", nullable = false)
     private String secondName;
 
@@ -33,6 +36,12 @@ public class User{
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
+    @Column(name = "address", nullable = false)
+    private String address;
 
     @ManyToMany
     @JoinTable(

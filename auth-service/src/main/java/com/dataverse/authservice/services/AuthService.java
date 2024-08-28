@@ -51,7 +51,7 @@ public class AuthService {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-                String token = jwtTokenUtils.generationUserToken(userDetails, user.getRoles());
+                String token = jwtTokenUtils.generationUserToken(userDetails, user.getRoles(), user);
                 logger.info("Token: {} for username: {} was generated", token, userDetails.getUsername());
                 kafkaTemplate.send("auth-service", authRequest.getUsername(), token);
                 logger.info("Message sent to kafka: {} with username: {}", token, authRequest.getUsername());

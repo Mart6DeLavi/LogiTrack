@@ -1,23 +1,22 @@
 package com.dataverse.authservice.dtos;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 
 /**
  * DTO for {@link com.dataverse.authservice.entities.User}
  */
-@Value
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class UserRegistrationDto implements Serializable {
-    String username;
-    String secondName;
-    String password;
-    String confirmPassword;
-    String email;
+    private String username;
+    private String firstName;
+    private String secondName;
+    private String password;
+    private String confirmPassword;
+    private String email;
+    private String phone;
+    private String address;
 }

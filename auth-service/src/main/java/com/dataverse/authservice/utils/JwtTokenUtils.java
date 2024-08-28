@@ -1,6 +1,7 @@
 package com.dataverse.authservice.utils;
 
 import com.dataverse.authservice.entities.Role;
+import com.dataverse.authservice.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,11 +25,17 @@ public class JwtTokenUtils {
     @Value("${jwt.user_secret_lifetime}")
     private Duration userSecretLifetime;
 
-    public String generationUserToken(UserDetails userDetails, Collection<Role> roles) {
+    public String generationUserToken(UserDetails userDetails, Collection<Role> roles, User user) {
         Map<String , Object> claims = new HashMap<>();
         claims.put("roles", roles.stream()
                 .map(Role::getName)
                 .collect(Collectors.toList()));
+
+        claims.put("firstName", user.getFirstName());
+        claims.put("secondName", user.getSecondName());
+        claims.put("email", user.getEmail());
+        claims.put("phone", user.getPhone());
+        claims.put("address", user.getAddress());
 
         Date issuedDate = new Date();
         Date expirationDate = new Date(issuedDate.getTime() + getUserSecretLifetime().toMillis());
