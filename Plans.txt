@@ -1,0 +1,46 @@
+				   Order
+Entity:
+	id - для базы данных
+	client_name - имя клиента
+	client_secondname - фамилия клиента
+	client_phone - номер телефона клиента
+	client_email - мыло клиента
+	product_name - имя товара
+	product_id - код товара внутри фирмы
+	order_time - время заказа
+	estimated_delivery_time - ориентировочное время и дата доставки
+	client_address - адресс заказа
+	sending_address - адресс отправки заказа
+	order_number - для клиента номер заказа
+	price - цена заказа
+
+order_dtos:
+	Customer_service:
+		product_name
+		order_time
+		estimated_delivery_time
+		delivery_adress (сlient_adress)
+		order_number
+		price
+
+	Inventory_service:
+		product_id
+	
+	Payments_service:
+		product_id
+		price
+
+	Notification_service:
+		product_name
+		order_number
+
+-----------------------------------------------------------------------------
+
+				Inventory
+С order_service через inventory_service_dto получает данные о заказе. Проверяет имеется ли данный товар на складе. Если да - высылает, если нет - говорит что нету.  
+
+------------------------------------------------------------------------------
+
+				Payments
+Принимает данные от order_service о заказе и от inventory_service о подтверждении наличия товара на складе и готовки к отправке. 
+
