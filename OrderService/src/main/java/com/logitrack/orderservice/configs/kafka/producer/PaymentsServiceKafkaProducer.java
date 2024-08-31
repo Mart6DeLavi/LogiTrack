@@ -38,7 +38,6 @@ public class PaymentsServiceKafkaProducer {
      *
      * @param topic   Название Kafka-топика, в который будет отправлено сообщение.
      * @param message Сообщение, которое необходимо отправить в Kafka. Оно приводится к строке перед отправкой.
-     *
      * @throws ClassCastException если {@code message} не может быть приведено к строке.
      */
     public void sentToPaymentsService(String topic,

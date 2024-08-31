@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CustomerServiceKafkaProducerThread extends Thread{
+public class CustomerServiceKafkaProducerThread extends Thread {
 
     private final CustomerServiceKafkaProducer producer;
     private final OrderEntity orderEntity;
@@ -60,7 +60,7 @@ public class CustomerServiceKafkaProducerThread extends Thread{
 
         try {
             producer.sendToCustomerService("order-service-to-customer-service", customerServiceDto);
-        } catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             throw new CustomerServiceKafkaNotSentException(ex.getMessage(), ex);
         }
     }

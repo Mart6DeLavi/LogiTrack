@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class PaymentsServiceKafkaProducerThread extends Thread{
+public class PaymentsServiceKafkaProducerThread extends Thread {
     private final PaymentsServiceKafkaProducer producer;
     private final OrderEntity orderEntity;
 

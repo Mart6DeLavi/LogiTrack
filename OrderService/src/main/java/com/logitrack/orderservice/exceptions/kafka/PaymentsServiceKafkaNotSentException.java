@@ -29,5 +29,7 @@ public class PaymentsServiceKafkaNotSentException extends RuntimeException {
      * @param cause   Причина возникновения исключения (другое исключение, которое вызвало это исключение).
      */
     public PaymentsServiceKafkaNotSentException(String message,
-                                                Throwable cause) { super(message, cause); }
+                                                Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -29,5 +29,7 @@ public class NotificationServiceKafkaNotSentException extends RuntimeException {
      * @param cause   Причина возникновения исключения (другое исключение, которое вызвало это исключение).
      */
     public NotificationServiceKafkaNotSentException(String message,
-                                                    Throwable cause) { super(message, cause); }
+                                                    Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class InventoryServiceKafkaProducerThread extends Thread{
+public class InventoryServiceKafkaProducerThread extends Thread {
 
     private final InventoryServiceKafkaProducer producer;
     private final OrderEntity orderEntity;
@@ -52,7 +52,7 @@ public class InventoryServiceKafkaProducerThread extends Thread{
         inventoryServiceDto.setProduct_id(orderEntity.getProductId());
         try {
             producer.sendToInventoryService("order-service-to-inventory-service", inventoryServiceDto);
-        }  catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new InventoryServiceKafkaNotSentException(e.getMessage());
         }
     }
