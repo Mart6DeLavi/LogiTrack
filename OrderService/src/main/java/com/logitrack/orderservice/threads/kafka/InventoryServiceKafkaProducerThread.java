@@ -7,6 +7,13 @@ import com.logitrack.orderservice.exceptions.kafka.InventoryServiceKafkaNotSentE
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Поток {@code InventoryServiceKafkaProducerThread} предназначен для отправки сообщений о заказах в сервис инвентаризации
+ * через Kafka. Этот поток позволяет обрабатывать отправку сообщений асинхронно, чтобы не блокировать основной поток выполнения.
+ *
+ * <p>Поток использует {@link InventoryServiceKafkaProducer} для отправки сообщений и обрабатывает исключения,
+ * связанные с отправкой, логируя их и выбрасывая пользовательское исключение {@link InventoryServiceKafkaNotSentException}.</p>
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class InventoryServiceKafkaProducerThread extends Thread{
@@ -14,6 +21,13 @@ public class InventoryServiceKafkaProducerThread extends Thread{
     private final InventoryServiceKafkaProducer producer;
     private final OrderEntity orderEntity;
 
+    /**
+     * Запускает поток, который отправляет сообщение о заказе в сервис инвентаризации через Kafka.
+     *
+     * <p>Этот метод переопределяет {@link Thread#run()} и вызывает {@link #sendMessage()} для отправки сообщения.
+     * В случае возникновения исключения при отправке сообщения, оно логируется и пробрасывается как
+     * {@link InventoryServiceKafkaNotSentException}.</p>
+     */
     @Override
     public void run() {
         log.info("Inventory Service Thread Started");
@@ -25,6 +39,13 @@ public class InventoryServiceKafkaProducerThread extends Thread{
         }
     }
 
+    /**
+     * Создает объект {@link InventoryServiceDto} из данных заказа и отправляет его в сервис инвентаризации через Kafka.
+     *
+     * <p>Этот метод вызывает {@link InventoryServiceKafkaProducer#sendToInventoryService(String, Object)}
+     * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
+     * {@link InventoryServiceKafkaNotSentException}.</p>
+     */
     private void sendMessage() {
         InventoryServiceDto inventoryServiceDto = new InventoryServiceDto();
 

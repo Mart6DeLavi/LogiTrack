@@ -7,6 +7,14 @@ import com.logitrack.orderservice.exceptions.kafka.CustomerServiceKafkaNotSentEx
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Поток {@code CustomerServiceKafkaProducerThread} предназначен для отправки сообщений о заказах в сервис
+ * клиентов через Kafka. Этот поток создается для обработки сообщений асинхронно, чтобы не блокировать основной
+ * поток выполнения.
+ *
+ * <p>Поток использует {@link CustomerServiceKafkaProducer} для отправки сообщений и обрабатывает исключения,
+ * связанные с отправкой, логируя их и выбрасывая пользовательское исключение {@link CustomerServiceKafkaNotSentException}.</p>
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class CustomerServiceKafkaProducerThread extends Thread{
@@ -14,6 +22,13 @@ public class CustomerServiceKafkaProducerThread extends Thread{
     private final CustomerServiceKafkaProducer producer;
     private final OrderEntity orderEntity;
 
+    /**
+     * Запускает поток, который отправляет сообщение о заказе в сервис клиентов через Kafka.
+     *
+     * <p>Этот метод переопределяет {@link Thread#run()} и вызывает {@link #sendMessage()} для отправки сообщения.
+     * В случае возникновения исключения при отправке сообщения, оно логируется и пробрасывается как
+     * {@link CustomerServiceKafkaNotSentException}.</p>
+     */
     @Override
     public void run() {
         log.info("Customer Service Thread Started");
@@ -26,7 +41,13 @@ public class CustomerServiceKafkaProducerThread extends Thread{
         }
     }
 
-
+    /**
+     * Создает объект {@link CustomerServiceDto} из данных заказа и отправляет его в сервис клиентов через Kafka.
+     *
+     * <p>Этот метод вызывает {@link CustomerServiceKafkaProducer#sendToCustomerService(String, Object)}
+     * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
+     * {@link CustomerServiceKafkaNotSentException}.</p>
+     */
     private void sendMessage() {
         CustomerServiceDto customerServiceDto = new CustomerServiceDto();
 

@@ -17,6 +17,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис {@code OrderService} предназначен для управления заказами.
+ *
+ * <p>Этот сервис предоставляет методы для получения всех заказов, создания нового заказа, поиска заказа по номеру
+ * и удаления заказа. При создании заказа, сообщения отправляются в различные сервисы через Kafka в отдельных потоках.</p>
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -27,10 +33,23 @@ public class OrderService {
     private final PaymentsServiceKafkaProducer paymentsServiceKafkaProducer;
     private final NotificationServiceKafkaProducer notificationServiceKafkaProducer;
 
+    /**
+     * Возвращает список всех заказов.
+     *
+     * @return Список всех заказов.
+     */
     public List<OrderEntity> getAllOrders() {
         return orderEntityRepository.findAll();
     }
 
+    /**
+     * Создает новый заказ и отправляет сообщения о заказе в соответствующие сервисы через Kafka в отдельных потоках.
+     *
+     * <p>Для каждого сервиса создается отдельный поток, который обрабатывает отправку сообщения в Kafka.</p>
+     *
+     * @param orderEntity Информация о заказе, который нужно создать.
+     * @return Сохраненный объект заказа.
+     */
     public OrderEntity createOrder(OrderEntity orderEntity) {
         new CustomerServiceKafkaProducerThread(customerServiceKafkaProducer, orderEntity).start();
         new InventoryServiceKafkaProducerThread(inventoryServiceKafkaProducer, orderEntity).start();
@@ -39,6 +58,13 @@ public class OrderService {
         return orderEntityRepository.save(orderEntity);
     }
 
+    /**
+     * Находит заказ по его номеру.
+     *
+     * @param orderNumber Номер заказа, который нужно найти.
+     * @return Информация о заказе в виде объекта {@link UserOrderInformationDto}.
+     * @throws NoSuchOrderException Если заказ с указанным номером не найден.
+     */
     public UserOrderInformationDto findOrderByOrderNumber(String orderNumber) {
         OrderEntity orderEntity = orderEntityRepository
                 .findOrderEntityByOrderNumber(orderNumber)
@@ -46,6 +72,13 @@ public class OrderService {
         return mapToUserOrderInformationDto(orderEntity);
     }
 
+    /**
+     * Удаляет заказ по его номеру.
+     *
+     * @param orderNumber Номер заказа, который нужно удалить.
+     * @return Сообщение об успешном удалении заказа.
+     * @throws NoSuchOrderException Если заказ с указанным номером не найден.
+     */
     public String deleteOrder(String orderNumber) {
         OrderEntity orderEntity = orderEntityRepository
                 .findOrderEntityByOrderNumber(orderNumber)
@@ -54,6 +87,12 @@ public class OrderService {
         return String.format("Order: %s deleted successfully", orderNumber);
     }
 
+    /**
+     * Преобразует объект {@link OrderEntity} в {@link UserOrderInformationDto}.
+     *
+     * @param orderEntity Объект заказа, который нужно преобразовать.
+     * @return Преобразованный объект {@link UserOrderInformationDto}.
+     */
     public UserOrderInformationDto mapToUserOrderInformationDto(OrderEntity orderEntity) {
         return new UserOrderInformationDto(
                 orderEntity.getProductName(),

@@ -7,6 +7,13 @@ import com.logitrack.orderservice.exceptions.kafka.NotificationServiceKafkaNotSe
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Поток {@code NotificationServiceKafkaProducerThread} предназначен для отправки сообщений о заказах в сервис уведомлений
+ * через Kafka. Этот поток работает асинхронно, чтобы не блокировать основной поток выполнения.
+ *
+ * <p>Поток использует {@link NotificationServiceKafkaProducer} для отправки сообщений и обрабатывает исключения,
+ * связанные с отправкой, логируя их и выбрасывая пользовательское исключение {@link NotificationServiceKafkaNotSentException}.</p>
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationServiceKafkaProducerThread extends Thread {
@@ -14,6 +21,13 @@ public class NotificationServiceKafkaProducerThread extends Thread {
     private final NotificationServiceKafkaProducer producer;
     private final OrderEntity orderEntity;
 
+    /**
+     * Запускает поток, который отправляет сообщение о заказе в сервис уведомлений через Kafka.
+     *
+     * <p>Этот метод переопределяет {@link Thread#run()} и вызывает {@link #sendMessage()} для отправки сообщения.
+     * В случае возникновения исключения при отправке сообщения, оно логируется и пробрасывается как
+     * {@link NotificationServiceKafkaNotSentException}.</p>
+     */
     @Override
     public void run() {
         log.info("Notification service kafka producer thread started");
@@ -26,7 +40,13 @@ public class NotificationServiceKafkaProducerThread extends Thread {
         }
     }
 
-
+    /**
+     * Создает объект {@link NotificationServiceDto} из данных заказа и отправляет его в сервис уведомлений через Kafka.
+     *
+     * <p>Этот метод вызывает {@link NotificationServiceKafkaProducer#sendToNotificationService(String, Object)}
+     * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
+     * {@link NotificationServiceKafkaNotSentException}.</p>
+     */
     private void sendMessage() {
         NotificationServiceDto notificationServiceDto = new NotificationServiceDto();
 
