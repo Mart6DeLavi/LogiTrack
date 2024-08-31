@@ -18,9 +18,12 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: auth-service
+      group-id: order-service
 
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
 
+jwt:
+  user_secret: s2v6asadsas1fsde1CSsaf2rewfas902u0aJWsgGIQ7382bfjafqfhqhfo
+  user_secret_lifetime: 10m

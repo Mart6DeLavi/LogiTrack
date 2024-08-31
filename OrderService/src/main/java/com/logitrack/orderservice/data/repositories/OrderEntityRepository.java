@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface OrderEntityRepository extends JpaRepository<OrderEntity, Long> {
     Optional<OrderEntity> findOrderEntityByOrderNumber(String orderNumber);
-    void deleteByOrderNumber(String orderNumber);
 }

@@ -14,7 +14,7 @@ Entity:
 	order_number - для клиента номер заказа
 	price - цена заказа
 
-order_dtos:
+order_dtos (для отправки в кафка):
 	Customer_service:
 		product_name
 		order_time

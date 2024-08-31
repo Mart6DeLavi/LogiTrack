@@ -36,6 +36,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation group: 'com.bucket4j', name: 'bucket4j_jdk8-core', version: '8.4.0'
 }
 
 tasks.named('test') {

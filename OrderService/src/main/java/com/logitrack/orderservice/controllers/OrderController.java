@@ -20,9 +20,10 @@ public class OrderController {
     }
 
     @PostMapping("/creating")
-    public OrderEntity createOrder(@RequestBody OrderEntity order) {
-        return orderService.createOrder(order);
+    public OrderEntity createOrder(@RequestBody OrderEntity orderEntity) {
+        return orderService.createOrder(orderEntity);
     }
+
 
     @GetMapping("/finding/{orderNumber}")
     public UserOrderInformationDto findOrders(@PathVariable String orderNumber) {
