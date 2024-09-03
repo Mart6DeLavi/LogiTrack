@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class InventoryServiceKafkaProducer {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendToInventoryService(String topic,
                                        Object message) {
-        kafkaTemplate.send(topic, (String) message);
+        kafkaTemplate.send(topic, message);
         log.info("Sent: {} to topic: {}", message, topic);
     }
 }
