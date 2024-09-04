@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CustomerServiceKafkaProducer {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     /**
      * Отправляет сообщение в указанный Kafka-топик.
@@ -39,7 +39,7 @@ public class CustomerServiceKafkaProducer {
      */
     public void sendToCustomerService(String topic,
                                       Object message) {
-        kafkaTemplate.send(topic, (String) message);
+        kafkaTemplate.send(topic, message);
         log.info("Sent: {} to topic: {}", message, topic);
     }
 }
