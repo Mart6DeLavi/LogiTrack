@@ -1,5 +1,6 @@
 package com.logitrack.orderservice.configs.kafka.producer;
 
+import com.logitrack.orderservice.dtos.PaymentsServiceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PaymentsServiceKafkaProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, PaymentsServiceDto> kafkaTemplate;
 
     /**
      * Отправляет сообщение в указанный Kafka-топик.
@@ -41,7 +42,7 @@ public class PaymentsServiceKafkaProducer {
      * @throws ClassCastException если {@code message} не может быть приведено к строке.
      */
     public void sentToPaymentsService(String topic,
-                                      Object message) {
+                                      PaymentsServiceDto message) {
         kafkaTemplate.send(topic, message);
         log.info("Sent: {} to topic: {}", message, topic);
     }

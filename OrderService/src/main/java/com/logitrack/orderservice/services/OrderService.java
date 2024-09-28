@@ -13,6 +13,7 @@ import com.logitrack.orderservice.threads.kafka.InventoryServiceKafkaProducerThr
 import com.logitrack.orderservice.threads.kafka.NotificationServiceKafkaProducerThread;
 import com.logitrack.orderservice.threads.kafka.PaymentsServiceKafkaProducerThread;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,10 +52,12 @@ public class OrderService {
      * @return Сохраненный объект заказа.
      */
     public OrderEntity createOrder(OrderEntity orderEntity) {
-        new CustomerServiceKafkaProducerThread(customerServiceKafkaProducer, orderEntity).start();
-        new InventoryServiceKafkaProducerThread(inventoryServiceKafkaProducer, orderEntity).start();
-        new NotificationServiceKafkaProducerThread(notificationServiceKafkaProducer, orderEntity).start();
-        new PaymentsServiceKafkaProducerThread(paymentsServiceKafkaProducer, orderEntity).start();
+//        new CustomerServiceKafkaProducerThread(customerServiceKafkaProducer, orderEntity).start();
+//        new InventoryServiceKafkaProducerThread(inventoryServiceKafkaProducer, orderEntity).start();
+//        new NotificationServiceKafkaProducerThread(notificationServiceKafkaProducer, orderEntity).start();
+//        new PaymentsServiceKafkaProducerThread(paymentsServiceKafkaProducer, orderEntity).start();
+        Thread inventoryServiceKafkaProducerThread = new InventoryServiceKafkaProducerThread(inventoryServiceKafkaProducer, orderEntity);
+        inventoryServiceKafkaProducerThread.start();
         return orderEntityRepository.save(orderEntity);
     }
 

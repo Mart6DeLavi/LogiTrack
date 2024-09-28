@@ -6,6 +6,7 @@ import com.logitrack.orderservice.dtos.InventoryServiceDto;
 import com.logitrack.orderservice.exceptions.kafka.InventoryServiceKafkaNotSentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Поток {@code InventoryServiceKafkaProducerThread} предназначен для отправки сообщений о заказах в сервис инвентаризации
@@ -16,10 +17,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
+@EnableAsync
 public class InventoryServiceKafkaProducerThread extends Thread {
 
     private final InventoryServiceKafkaProducer producer;
     private final OrderEntity orderEntity;
+
+    private static final String KAFKA_TOPIC = "order-service-to-inventory-service";
 
     /**
      * Запускает поток, который отправляет сообщение о заказе в сервис инвентаризации через Kafka.
@@ -37,12 +41,13 @@ public class InventoryServiceKafkaProducerThread extends Thread {
             log.error("Error sending message to inventory service: {}", ex.getMessage());
             throw new InventoryServiceKafkaNotSentException(ex.getMessage(), ex);
         }
+        log.info("Inventory Service Thread Finished");
     }
 
     /**
      * Создает объект {@link InventoryServiceDto} из данных заказа и отправляет его в сервис инвентаризации через Kafka.
      *
-     * <p>Этот метод вызывает {@link InventoryServiceKafkaProducer#sendToInventoryService(String, Object)}
+     * <p>Этот метод вызывает {@link InventoryServiceKafkaProducer#sendToInventoryService(String, InventoryServiceDto)}
      * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
      * {@link InventoryServiceKafkaNotSentException}.</p>
      */
@@ -51,7 +56,7 @@ public class InventoryServiceKafkaProducerThread extends Thread {
 
         inventoryServiceDto.setProduct_id(orderEntity.getProductId());
         try {
-            producer.sendToInventoryService("order-service-to-inventory-service", inventoryServiceDto);
+            producer.sendToInventoryService(KAFKA_TOPIC, inventoryServiceDto);
         } catch (RuntimeException e) {
             throw new InventoryServiceKafkaNotSentException(e.getMessage());
         }

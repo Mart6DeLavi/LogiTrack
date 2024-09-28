@@ -34,17 +34,24 @@ public class CustomerServiceKafkaProducerThread extends Thread {
         log.info("Customer Service Thread Started");
 
         try {
-            sendMessage();
+            try {
+                sendMessage();
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         } catch (RuntimeException ex) {
             log.error("Error sending message to customer service: {}", ex.getMessage());
             throw new CustomerServiceKafkaNotSentException(ex.getMessage(), ex);
         }
+
+        log.info("Customer Service Thread Finished");
     }
 
     /**
      * Создает объект {@link CustomerServiceDto} из данных заказа и отправляет его в сервис клиентов через Kafka.
      *
-     * <p>Этот метод вызывает {@link CustomerServiceKafkaProducer#sendToCustomerService(String, Object)}
+     * <p>Этот метод вызывает {@link CustomerServiceKafkaProducer#sendToCustomerService(String, CustomerServiceDto)}
      * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
      * {@link CustomerServiceKafkaNotSentException}.</p>
      */

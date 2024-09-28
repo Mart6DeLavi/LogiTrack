@@ -37,12 +37,14 @@ public class PaymentsServiceKafkaProducerThread extends Thread {
             log.error("Payments Service Kafka Producer Thread failed", ex);
             throw new PaymentsServiceKafkaNotSentException(ex.getMessage(), ex);
         }
+
+        log.info("Payments Service Finished");
     }
 
     /**
      * Создает объект {@link PaymentsServiceDto} из данных заказа и отправляет его в сервис платежей через Kafka.
      *
-     * <p>Этот метод вызывает {@link PaymentsServiceKafkaProducer#sentToPaymentsService(String, Object)}
+     * <p>Этот метод вызывает {@link PaymentsServiceKafkaProducer#sentToPaymentsService(String, PaymentsServiceDto)}
      * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
      * {@link PaymentsServiceKafkaNotSentException}.</p>
      */

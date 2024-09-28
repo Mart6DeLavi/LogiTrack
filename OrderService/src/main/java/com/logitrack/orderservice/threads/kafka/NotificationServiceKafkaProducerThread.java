@@ -38,12 +38,14 @@ public class NotificationServiceKafkaProducerThread extends Thread {
             log.error("Notification service kafka producer thread failed", ex);
             throw new NotificationServiceKafkaNotSentException(ex.getMessage(), ex);
         }
+
+        log.info("Notification Service Finished");
     }
 
     /**
      * Создает объект {@link NotificationServiceDto} из данных заказа и отправляет его в сервис уведомлений через Kafka.
      *
-     * <p>Этот метод вызывает {@link NotificationServiceKafkaProducer#sendToNotificationService(String, Object)}
+     * <p>Этот метод вызывает {@link NotificationServiceKafkaProducer#sendToNotificationService(String, NotificationServiceDto)}
      * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
      * {@link NotificationServiceKafkaNotSentException}.</p>
      */
