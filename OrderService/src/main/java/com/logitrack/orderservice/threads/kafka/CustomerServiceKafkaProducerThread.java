@@ -6,6 +6,8 @@ import com.logitrack.orderservice.dtos.CustomerServiceDto;
 import com.logitrack.orderservice.exceptions.kafka.CustomerServiceKafkaNotSentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Поток {@code CustomerServiceKafkaProducerThread} предназначен для отправки сообщений о заказах в сервис
@@ -17,58 +19,31 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CustomerServiceKafkaProducerThread extends Thread {
+@EnableAsync
+public class CustomerServiceKafkaProducerThread {
 
     private final CustomerServiceKafkaProducer producer;
-    private final OrderEntity orderEntity;
 
-    /**
-     * Запускает поток, который отправляет сообщение о заказе в сервис клиентов через Kafka.
-     *
-     * <p>Этот метод переопределяет {@link Thread#run()} и вызывает {@link #sendMessage()} для отправки сообщения.
-     * В случае возникновения исключения при отправке сообщения, оно логируется и пробрасывается как
-     * {@link CustomerServiceKafkaNotSentException}.</p>
-     */
-    @Override
-    public void run() {
-        log.info("Customer Service Thread Started");
+    private static final String CUSTOMER_TOPIC = "order-service-to-customer-service";
 
-        try {
+    @Async
+    public void sendToCustomerService(OrderEntity orderEntity) {
+        Thread customerServiceKafkaProducerThread = new Thread(() -> {
+            CustomerServiceDto customerServiceDto = new CustomerServiceDto();
+
             try {
-                sendMessage();
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                customerServiceDto.setProduct_name(orderEntity.getProductName());
+                customerServiceDto.setOrder_time(orderEntity.getOrderTime());
+                customerServiceDto.setEstimated_delivery_time(orderEntity.getEstimatedDeliveryTime());
+                customerServiceDto.setDelivery_address(orderEntity.getClientAddress());
+                customerServiceDto.setPrice(orderEntity.getPrice());
+
+                producer.sendToCustomerService(CUSTOMER_TOPIC, customerServiceDto);
+            } catch (RuntimeException ex) {
+                throw new CustomerServiceKafkaNotSentException(ex.getMessage(), ex);
             }
-        } catch (RuntimeException ex) {
-            log.error("Error sending message to customer service: {}", ex.getMessage());
-            throw new CustomerServiceKafkaNotSentException(ex.getMessage(), ex);
-        }
+        });
 
-        log.info("Customer Service Thread Finished");
-    }
-
-    /**
-     * Создает объект {@link CustomerServiceDto} из данных заказа и отправляет его в сервис клиентов через Kafka.
-     *
-     * <p>Этот метод вызывает {@link CustomerServiceKafkaProducer#sendToCustomerService(String, CustomerServiceDto)}
-     * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
-     * {@link CustomerServiceKafkaNotSentException}.</p>
-     */
-    private void sendMessage() {
-        CustomerServiceDto customerServiceDto = new CustomerServiceDto();
-
-        customerServiceDto.setProduct_name(orderEntity.getProductName());
-        customerServiceDto.setOrder_time(orderEntity.getOrderTime());
-        customerServiceDto.setEstimated_delivery_time(orderEntity.getEstimatedDeliveryTime());
-        customerServiceDto.setOrder_time(orderEntity.getOrderTime());
-        customerServiceDto.setDelivery_address(orderEntity.getClientAddress());
-        customerServiceDto.setPrice(orderEntity.getPrice());
-
-        try {
-            producer.sendToCustomerService("order-service-to-customer-service", customerServiceDto);
-        } catch (RuntimeException ex) {
-            throw new CustomerServiceKafkaNotSentException(ex.getMessage(), ex);
-        }
+        customerServiceKafkaProducerThread.start();
     }
 }
