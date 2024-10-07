@@ -1,4 +1,4 @@
-package com.logitrack.orderservice.dtos;
+package com.logitrack.orderservice.dtos.producer;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,11 +7,10 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 /**
- * {@code NotificationServiceDto} представляет собой Data Transfer Object (DTO) для передачи информации о заказе в сервис уведомлений.
+ * {@code InventoryServiceDto} представляет собой Data Transfer Object (DTO) для передачи информации о продукте в сервис инвентаря.
  *
- * <p>Этот класс используется для упаковки данных о заказе, таких как название продукта и номер заказа, для передачи между
- * различными слоями приложения или сервисами. DTO обеспечивает простой и удобный способ представления данных для отправки
- * уведомлений.</p>
+ * <p>Этот класс используется для упаковки данных о продукте, таких как идентификатор продукта, для передачи между различными
+ * слоями приложения или сервисами. DTO обеспечивает удобный способ представления данных для отправки или получения информации.</p>
  *
  * <p>Класс использует аннотации {@link Getter}, {@link Setter}, {@link RequiredArgsConstructor} и {@link FieldDefaults}
  * для автоматической генерации геттеров и сеттеров, создания конструктора с обязательными аргументами и установки
@@ -26,7 +25,6 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NotificationServiceDto {
-    String product_name;
-    String order_number;
+public class InventoryServiceDtoProducer {
+    int product_id;
 }

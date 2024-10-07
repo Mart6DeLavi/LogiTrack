@@ -2,7 +2,7 @@ package com.logitrack.orderservice.threads.kafka;
 
 import com.logitrack.orderservice.configs.kafka.producer.NotificationServiceKafkaProducer;
 import com.logitrack.orderservice.data.entities.OrderEntity;
-import com.logitrack.orderservice.dtos.NotificationServiceDto;
+import com.logitrack.orderservice.dtos.producer.NotificationServiceDtoProducer;
 import com.logitrack.orderservice.exceptions.kafka.NotificationServiceKafkaNotSentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,13 +67,13 @@ public class NotificationServiceKafkaProducerThread extends Thread {
     @Async
     public void sendToNotificationService(OrderEntity orderEntity) {
         Thread notificationServiceKafkaProducerThread = new Thread(() -> {
-           NotificationServiceDto notificationServiceDto = new NotificationServiceDto();
+           NotificationServiceDtoProducer notificationServiceDtoProducer = new NotificationServiceDtoProducer();
 
-           notificationServiceDto.setProduct_name(orderEntity.getProductName());
-           notificationServiceDto.setOrder_number(orderEntity.getOrderNumber());
+           notificationServiceDtoProducer.setProduct_name(orderEntity.getProductName());
+           notificationServiceDtoProducer.setOrder_number(orderEntity.getOrderNumber());
 
            try {
-               producer.sendToNotificationService(NOTIFICATION_TOPIC, notificationServiceDto);
+               producer.sendToNotificationService(NOTIFICATION_TOPIC, notificationServiceDtoProducer);
            } catch (RuntimeException ex) {
                throw new NotificationServiceKafkaNotSentException(ex.getMessage(), ex);
            }

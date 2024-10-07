@@ -2,7 +2,7 @@ package com.logitrack.orderservice.threads.kafka;
 
 import com.logitrack.orderservice.configs.kafka.producer.CustomerServiceKafkaProducer;
 import com.logitrack.orderservice.data.entities.OrderEntity;
-import com.logitrack.orderservice.dtos.CustomerServiceDto;
+import com.logitrack.orderservice.dtos.producer.CustomerServiceDtoProducer;
 import com.logitrack.orderservice.exceptions.kafka.CustomerServiceKafkaNotSentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +29,16 @@ public class CustomerServiceKafkaProducerThread {
     @Async
     public void sendToCustomerService(OrderEntity orderEntity) {
         Thread customerServiceKafkaProducerThread = new Thread(() -> {
-            CustomerServiceDto customerServiceDto = new CustomerServiceDto();
+            CustomerServiceDtoProducer customerServiceDtoProducer = new CustomerServiceDtoProducer();
 
             try {
-                customerServiceDto.setProduct_name(orderEntity.getProductName());
-                customerServiceDto.setOrder_time(orderEntity.getOrderTime());
-                customerServiceDto.setEstimated_delivery_time(orderEntity.getEstimatedDeliveryTime());
-                customerServiceDto.setDelivery_address(orderEntity.getClientAddress());
-                customerServiceDto.setPrice(orderEntity.getPrice());
+                customerServiceDtoProducer.setProduct_name(orderEntity.getProductName());
+                customerServiceDtoProducer.setOrder_time(orderEntity.getOrderTime());
+                customerServiceDtoProducer.setEstimated_delivery_time(orderEntity.getEstimatedDeliveryTime());
+                customerServiceDtoProducer.setDelivery_address(orderEntity.getClientAddress());
+                customerServiceDtoProducer.setPrice(orderEntity.getPrice());
 
-                producer.sendToCustomerService(CUSTOMER_TOPIC, customerServiceDto);
+                producer.sendToCustomerService(CUSTOMER_TOPIC, customerServiceDtoProducer);
             } catch (RuntimeException ex) {
                 throw new CustomerServiceKafkaNotSentException(ex.getMessage(), ex);
             }

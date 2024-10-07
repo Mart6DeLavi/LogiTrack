@@ -1,6 +1,6 @@
 package com.logitrack.orderservice.configs.kafka.producer;
 
-import com.logitrack.orderservice.dtos.CustomerServiceDto;
+import com.logitrack.orderservice.dtos.producer.CustomerServiceDtoProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CustomerServiceKafkaProducer {
 
-    private final KafkaTemplate<String, CustomerServiceDto> kafkaTemplate;
+    private final KafkaTemplate<String, CustomerServiceDtoProducer> kafkaTemplate;
 
     /**
      * Отправляет сообщение в указанный Kafka-топик.
@@ -39,7 +39,7 @@ public class CustomerServiceKafkaProducer {
      * @throws ClassCastException если {@code message} не является строкой.
      */
     public void sendToCustomerService(String topic,
-                                      CustomerServiceDto message) {
+                                      CustomerServiceDtoProducer message) {
         kafkaTemplate.send(topic, message);
         log.info("Sent: {} to topic: {}", message, topic);
     }

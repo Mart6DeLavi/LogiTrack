@@ -2,7 +2,7 @@ package com.logitrack.orderservice.threads.kafka;
 
 import com.logitrack.orderservice.configs.kafka.producer.PaymentsServiceKafkaProducer;
 import com.logitrack.orderservice.data.entities.OrderEntity;
-import com.logitrack.orderservice.dtos.PaymentsServiceDto;
+import com.logitrack.orderservice.dtos.producer.PaymentsServiceDtoProducer;
 import com.logitrack.orderservice.exceptions.kafka.PaymentsServiceKafkaNotSentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +25,13 @@ public class PaymentsServiceKafkaProducerThread extends Thread {
     @Async
     public void sendToPaymentsService(OrderEntity orderEntity) {
         Thread paymentsServiceKafkaProducerThread = new Thread(() -> {
-           PaymentsServiceDto paymentsServiceDto = new PaymentsServiceDto();
+           PaymentsServiceDtoProducer paymentsServiceDtoProducer = new PaymentsServiceDtoProducer();
 
-           paymentsServiceDto.setProduct_id(orderEntity.getProductId());
-           paymentsServiceDto.setPrice(orderEntity.getPrice());
+           paymentsServiceDtoProducer.setProduct_id(orderEntity.getProductId());
+           paymentsServiceDtoProducer.setPrice(orderEntity.getPrice());
 
            try {
-               producer.sentToPaymentsService(PAYMENTS_TOPIC, paymentsServiceDto);
+               producer.sentToPaymentsService(PAYMENTS_TOPIC, paymentsServiceDtoProducer);
            } catch (RuntimeException ex) {
                throw new PaymentsServiceKafkaNotSentException(ex.getMessage(), ex);
            }

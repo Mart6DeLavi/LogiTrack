@@ -2,7 +2,7 @@ package com.logitrack.orderservice.threads.kafka;
 
 import com.logitrack.orderservice.configs.kafka.producer.InventoryServiceKafkaProducer;
 import com.logitrack.orderservice.data.entities.OrderEntity;
-import com.logitrack.orderservice.dtos.InventoryServiceDto;
+import com.logitrack.orderservice.dtos.producer.InventoryServiceDtoProducer;
 import com.logitrack.orderservice.exceptions.kafka.InventoryServiceKafkaNotSentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,10 @@ public class InventoryServiceKafkaProducerThread {
     @Async
     public void sendToInventoryService(OrderEntity orderEntity) {
         Thread inventoryServiceKafkaProducerThread = new Thread(() -> {
-            InventoryServiceDto inventoryServiceDto = new InventoryServiceDto();
-            inventoryServiceDto.setProduct_id(orderEntity.getProductId());
+            InventoryServiceDtoProducer inventoryServiceDtoProducer = new InventoryServiceDtoProducer();
+            inventoryServiceDtoProducer.setProduct_id(orderEntity.getProductId());
            try {
-               producer.sendToInventoryService(INVENTORY_TOPIC, inventoryServiceDto);
+               producer.sendToInventoryService(INVENTORY_TOPIC, inventoryServiceDtoProducer);
            } catch (RuntimeException ex) {
                throw new InventoryServiceKafkaNotSentException(ex.getMessage());
            }

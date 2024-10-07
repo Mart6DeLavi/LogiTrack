@@ -1,4 +1,4 @@
-package com.logitrack.orderservice.dtos;
+package com.logitrack.orderservice.dtos.producer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 @Setter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CustomerServiceDto {
+public class CustomerServiceDtoProducer {
     String product_name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")

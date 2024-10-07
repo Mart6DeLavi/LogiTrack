@@ -1,7 +1,7 @@
-package com.logitrack.orderservice.configs.kafka.configs;
+package com.logitrack.orderservice.configs.kafka.configs.producer;
 
-import com.logitrack.orderservice.dtos.InventoryServiceDto;
-import com.logitrack.orderservice.serializers.InventoryServiceDtoSerializer;
+import com.logitrack.orderservice.dtos.producer.PaymentsServiceDtoProducer;
+import com.logitrack.orderservice.serializers.PaymentsServiceDtoSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -14,19 +14,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class InventoryServiceKafkaProducerConfig {
+public class PaymentsServiceKafkaProducerConfig {
 
     @Bean
-    public ProducerFactory<String, InventoryServiceDto> inventoryServiceProducerFactory() {
+    public ProducerFactory<String, PaymentsServiceDtoProducer> paymentsServiceProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, InventoryServiceDtoSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, PaymentsServiceDtoSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<String, InventoryServiceDto> inventoryServiceKafkaTemplate() {
-        return new KafkaTemplate<>(inventoryServiceProducerFactory());
+    public KafkaTemplate<String, PaymentsServiceDtoProducer> paymentsServiceKafkaTemplate() {
+        return new KafkaTemplate<>(paymentsServiceProducerFactory());
     }
 }
