@@ -12,15 +12,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Kafka consumer для получения сообщений из инвентаризационного сервиса.
+ */
+
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceKafkaConsumer {
 
     private final ProductService productService;
-
     private final OrderServiceKafkaProducer orderServiceKafkaProducer;
 
+
+    /**
+     * Метод для обработки сообщений от Kafka.
+     * @param inventoryServiceDto объект, полученный из Kafka.
+     */
 
     @KafkaListener(topics = "order-service-to-inventory-service", groupId = "order-service")
     public void consume(InventoryServiceDto inventoryServiceDto) {

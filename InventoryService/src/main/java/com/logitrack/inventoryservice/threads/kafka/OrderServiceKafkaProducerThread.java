@@ -10,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+/**
+ * Поток для отправки данных в order-service.
+ * Использует асинхронное выполнение задач.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @EnableAsync
@@ -18,6 +22,12 @@ public class OrderServiceKafkaProducerThread {
     private final OrderServiceKafkaProducer producer;
 
     private static final String ORDER_TOPIC = "inventory-service-to-order-service";
+
+    /**
+     * Асинхронная отправка данных продукта в order-service через Kafka.
+     *
+     * @param product данные продукта
+     */
 
     @Async
     public void sendToOrderService(Product product) {

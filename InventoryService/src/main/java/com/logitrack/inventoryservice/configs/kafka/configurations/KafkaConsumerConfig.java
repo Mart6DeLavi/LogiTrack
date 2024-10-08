@@ -14,9 +14,17 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Конфигурация для Kafka consumer.
+ */
 @Configuration
 @EnableKafka
 public class KafkaConsumerConfig {
+    /**
+     * Создаёт фабрику consumer для Kafka.
+     *
+     * @return ConsumerFactory для InventoryServiceDto
+     */
     @Bean
     public ConsumerFactory<String, InventoryServiceDto> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -26,6 +34,11 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
+    /**
+     * Настраивает фабрику контейнеров KafkaListener.
+     *
+     * @return ConcurrentKafkaListenerContainerFactory для InventoryServiceDto
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, InventoryServiceDto> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, InventoryServiceDto> factory = new ConcurrentKafkaListenerContainerFactory<>();

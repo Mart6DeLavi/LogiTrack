@@ -6,6 +6,9 @@ import com.logitrack.inventoryservice.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для работы с продуктами.
+ */
 @Service
 public class ProductService {
 
@@ -16,6 +19,12 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    /**
+     * Поиск продукта по его ID.
+     *
+     * @param productId ID продукта
+     * @return продукт, если он найден, иначе выбрасывает исключение NoSuchProductException
+     */
     public Product findProductById(int productId) {
         return productRepository.findProductById(productId)
                 .orElseThrow(() -> new NoSuchProductException("Product with id: " + productId + " not found"));
