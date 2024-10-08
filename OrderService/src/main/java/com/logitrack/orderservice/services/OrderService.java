@@ -1,5 +1,6 @@
 package com.logitrack.orderservice.services;
 
+import com.logitrack.orderservice.configs.kafka.consumer.InventoryServiceKafkaConsumer;
 import com.logitrack.orderservice.configs.kafka.producer.CustomerServiceKafkaProducer;
 import com.logitrack.orderservice.configs.kafka.producer.InventoryServiceKafkaProducer;
 import com.logitrack.orderservice.configs.kafka.producer.NotificationServiceKafkaProducer;
@@ -7,6 +8,7 @@ import com.logitrack.orderservice.configs.kafka.producer.PaymentsServiceKafkaPro
 import com.logitrack.orderservice.data.entities.OrderEntity;
 import com.logitrack.orderservice.data.repositories.OrderEntityRepository;
 import com.logitrack.orderservice.dtos.UserOrderInformationDto;
+import com.logitrack.orderservice.dtos.consumer.InventoryServiceDtoConsumer;
 import com.logitrack.orderservice.exceptions.NoSuchOrderException;
 import com.logitrack.orderservice.threads.kafka.CustomerServiceKafkaProducerThread;
 import com.logitrack.orderservice.threads.kafka.InventoryServiceKafkaProducerThread;
@@ -33,6 +35,8 @@ public class OrderService {
     private final PaymentsServiceKafkaProducer paymentsServiceKafkaProducer;
     private final NotificationServiceKafkaProducer notificationServiceKafkaProducer;
 
+    private final InventoryServiceKafkaConsumer inventoryServiceKafkaConsumer;
+
     /**
      * Возвращает список всех заказов.
      *
@@ -50,7 +54,24 @@ public class OrderService {
      * @param orderEntity Информация о заказе, который нужно создать.
      * @return Сохраненный объект заказа.
      */
-    public OrderEntity createOrder(OrderEntity orderEntity) {
+    public UserOrderInformationDto createOrder(OrderEntity orderEntity) {
+        orderEntityRepository.save(orderEntity);
+
+        sendToOtherServices(orderEntity);
+
+        InventoryServiceDtoConsumer inventoryServiceDtoConsumer = inventoryServiceKafkaConsumer.getInventoryFuture().join();
+
+        UserOrderInformationDto userOrderInformationDto = new UserOrderInformationDto();
+
+        userOrderInformationDto.setOrder_number(orderEntity.getOrderNumber());
+        userOrderInformationDto.setClient_address(orderEntity.getClientAddress());
+        userOrderInformationDto.setManufacture(inventoryServiceDtoConsumer.getManufacture());
+        userOrderInformationDto.setProduct_name(inventoryServiceDtoConsumer.getTitle());
+        userOrderInformationDto.setPrice((double) inventoryServiceDtoConsumer.getPrice());
+        return userOrderInformationDto;
+    }
+
+    private void sendToOtherServices(OrderEntity orderEntity) {
         CustomerServiceKafkaProducerThread customerServiceKafkaProducerThread =
                 new CustomerServiceKafkaProducerThread(customerServiceKafkaProducer);
         customerServiceKafkaProducerThread.sendToCustomerService(orderEntity);
@@ -65,25 +86,9 @@ public class OrderService {
 
         PaymentsServiceKafkaProducerThread paymentsServiceKafkaProducerThread =
                 new PaymentsServiceKafkaProducerThread(paymentsServiceKafkaProducer);
-
         paymentsServiceKafkaProducerThread.sendToPaymentsService(orderEntity);
-
-        return orderEntityRepository.save(orderEntity);
     }
 
-    /**
-     * Находит заказ по его номеру.
-     *
-     * @param orderNumber Номер заказа, который нужно найти.
-     * @return Информация о заказе в виде объекта {@link UserOrderInformationDto}.
-     * @throws NoSuchOrderException Если заказ с указанным номером не найден.
-     */
-    public UserOrderInformationDto findOrderByOrderNumber(String orderNumber) {
-        OrderEntity orderEntity = orderEntityRepository
-                .findOrderEntityByOrderNumber(orderNumber)
-                .orElseThrow(() -> new NoSuchOrderException(orderNumber));
-        return mapToUserOrderInformationDto(orderEntity);
-    }
 
     /**
      * Удаляет заказ по его номеру.
@@ -100,18 +105,4 @@ public class OrderService {
         return String.format("Order: %s deleted successfully", orderNumber);
     }
 
-    /**
-     * Преобразует объект {@link OrderEntity} в {@link UserOrderInformationDto}.
-     *
-     * @param orderEntity Объект заказа, который нужно преобразовать.
-     * @return Преобразованный объект {@link UserOrderInformationDto}.
-     */
-    public UserOrderInformationDto mapToUserOrderInformationDto(OrderEntity orderEntity) {
-        return new UserOrderInformationDto(
-                orderEntity.getProductName(),
-                orderEntity.getOrderNumber(),
-                orderEntity.getClientAddress(),
-                orderEntity.getPrice()
-        );
-    }
 }

@@ -1,8 +1,6 @@
 package com.logitrack.orderservice.dtos;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
@@ -20,11 +18,13 @@ import lombok.experimental.FieldDefaults;
  * @see lombok.experimental.FieldDefaults
  */
 @Getter
-@AllArgsConstructor
+@Setter
+@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserOrderInformationDto {
     String product_name;
-    String order_name;
+    String order_number;
     String client_address;
+    String manufacture;
     Double price;
 }

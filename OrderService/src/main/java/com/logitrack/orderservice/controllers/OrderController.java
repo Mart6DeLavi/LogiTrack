@@ -53,23 +53,23 @@ public class OrderController {
      * @return Созданный заказ {@link OrderEntity}.
      */
     @PostMapping(CREATE_ORDER)
-    public OrderEntity createOrder(@RequestBody OrderEntity orderEntity) {
+    public UserOrderInformationDto createOrder(@RequestBody OrderEntity orderEntity) {
         return orderService.createOrder(orderEntity);
     }
 
-    /**
-     * Обрабатывает GET-запрос для поиска заказа по номеру заказа.
-     *
-     * <p>Этот метод вызывает {@link OrderService#findOrderByOrderNumber(String)} для поиска заказа по номеру и возвращает
-     * информацию о заказе.</p>
-     *
-     * @param orderNumber Номер заказа, который нужно найти.
-     * @return Информация о заказе {@link UserOrderInformationDto}.
-     */
-    @GetMapping(FIND_ORDER)
-    public UserOrderInformationDto findOrders(@PathVariable String orderNumber) {
-        return orderService.findOrderByOrderNumber(orderNumber);
-    }
+//    /**
+//     * Обрабатывает GET-запрос для поиска заказа по номеру заказа.
+//     *
+//     * <p>Этот метод вызывает {@link OrderService#findOrderByOrderNumber(String)} для поиска заказа по номеру и возвращает
+//     * информацию о заказе.</p>
+//     *
+//     * @param orderNumber Номер заказа, который нужно найти.
+//     * @return Информация о заказе {@link UserOrderInformationDto}.
+//     */
+//    @GetMapping(FIND_ORDER)
+//    public UserOrderInformationDto findOrders(@PathVariable String orderNumber) {
+//        return orderService.findOrderByOrderNumber(orderNumber);
+//    }
 
     /**
      * Обрабатывает DELETE-запрос для удаления заказа по номеру заказа.
@@ -84,4 +84,6 @@ public class OrderController {
     public String deleteOrder(@PathVariable String orderNumber) {
         return orderService.deleteOrder(orderNumber);
     }
+
+
 }

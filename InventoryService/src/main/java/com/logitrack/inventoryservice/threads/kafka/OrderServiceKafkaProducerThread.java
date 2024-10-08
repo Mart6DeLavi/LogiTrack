@@ -30,6 +30,7 @@ public class OrderServiceKafkaProducerThread {
 
             try {
                 producer.sendToOrderService(ORDER_TOPIC, orderServiceDto);
+                log.info("Sent to Order Service: {} \t{} \t{}", orderServiceDto.getTitle(), orderServiceDto.getManufacture(), orderServiceDto.getPrice());
             } catch (RuntimeException ex) {
                 throw new NoSendMessageException(ex.getMessage());
             }
