@@ -3,8 +3,8 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/InventoryService" />
+    <file type="web" url="file://$PROJECT_DIR$/logitrack-shipping-service" />
     <file type="web" url="file://$PROJECT_DIR$/OrderService" />
-    <file type="web" url="file://$PROJECT_DIR$/shipping-service" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
