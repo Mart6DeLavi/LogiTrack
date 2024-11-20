@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/InventoryService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/InventoryService.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/InventoryService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/InventoryService.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/InventoryService_main.iml" filepath="$PROJECT_DIR$/.idea/modules/InventoryService_main.iml" group="InventoryService" />
       <module fileurl="file://$PROJECT_DIR$/LogiTrack.iml" filepath="$PROJECT_DIR$/LogiTrack.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/OrderService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/OrderService.main.iml" />
     </modules>
