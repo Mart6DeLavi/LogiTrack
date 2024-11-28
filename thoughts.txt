@@ -1,0 +1,16 @@
+Shipping Service:
+	delivery's service table:
+		service id
+		service name
+		service reputation - в зависимости от репутации сервиса ему будет больше или меньше отдаваться доставок
+	
+	delivery's table:
+		delivery id внутри таблицы
+		delivery number для пользователя
+		delivery service id
+		delivery address
+		order sum
+		order products list
+		order id
+		order document mongo id - id файла который хранит всю информацию о заказе в базе данных MongoDB
+		
