@@ -1,6 +1,7 @@
 package com.logitrack.orderservice.controllers;
 
 import com.logitrack.orderservice.data.entities.OrderEntity;
+import com.logitrack.orderservice.dtos.UserOrderCreationDto;
 import com.logitrack.orderservice.dtos.UserOrderInformationDto;
 import com.logitrack.orderservice.services.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -47,14 +48,14 @@ public class OrderController {
     /**
      * Обрабатывает POST-запрос для создания нового заказа.
      *
-     * <p>Этот метод вызывает {@link OrderService#createOrder(OrderEntity)} для создания нового заказа на основе переданных данных.</p>
+     * <p>Этот метод вызывает {@link OrderService#createOrder(UserOrderCreationDto)} для создания нового заказа на основе переданных данных.</p>
      *
-     * @param orderEntity Данные нового заказа, которые должны быть созданы.
+     * @param userOrderCreationDto  Данные нового заказа, которые должны быть созданы.
      * @return Созданный заказ {@link OrderEntity}.
      */
     @PostMapping(CREATE_ORDER)
-    public UserOrderInformationDto createOrder(@RequestBody OrderEntity orderEntity) {
-        return orderService.createOrder(orderEntity);
+    public UserOrderInformationDto createOrder(@RequestBody UserOrderCreationDto userOrderCreationDto) {
+        return orderService.createOrder(userOrderCreationDto);
     }
 
 //    /**

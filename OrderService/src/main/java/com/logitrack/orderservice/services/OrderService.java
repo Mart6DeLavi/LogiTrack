@@ -7,6 +7,7 @@ import com.logitrack.orderservice.configs.kafka.producer.NotificationServiceKafk
 import com.logitrack.orderservice.configs.kafka.producer.PaymentsServiceKafkaProducer;
 import com.logitrack.orderservice.data.entities.OrderEntity;
 import com.logitrack.orderservice.data.repositories.OrderEntityRepository;
+import com.logitrack.orderservice.dtos.UserOrderCreationDto;
 import com.logitrack.orderservice.dtos.UserOrderInformationDto;
 import com.logitrack.orderservice.dtos.consumer.InventoryServiceDtoConsumer;
 import com.logitrack.orderservice.exceptions.NoSuchOrderException;
@@ -17,6 +18,7 @@ import com.logitrack.orderservice.threads.kafka.PaymentsServiceKafkaProducerThre
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -46,39 +48,53 @@ public class OrderService {
         return orderEntityRepository.findAll();
     }
 
-    /**
+        /**
      * Создает новый заказ и отправляет сообщения о заказе в соответствующие сервисы через Kafka в отдельных потоках.
      *
      * <p>Для каждого сервиса создается отдельный поток, который обрабатывает отправку сообщения в Kafka.</p>
      *
-     * @param orderEntity Информация о заказе, который нужно создать.
+     * @param userOrderCreationDto Информация о заказе, который нужно создать.
      * @return Сохраненный объект заказа.
      */
-    public UserOrderInformationDto createOrder(OrderEntity orderEntity) {
-        orderEntityRepository.save(orderEntity);
 
-        sendToOtherServices(orderEntity);
 
+    public UserOrderInformationDto createOrder(UserOrderCreationDto userOrderCreationDto) {
+        OrderEntity orderEntity = new OrderEntity();
+        sendToOtherServices(userOrderCreationDto, orderEntity);
         InventoryServiceDtoConsumer inventoryServiceDtoConsumer = inventoryServiceKafkaConsumer.getInventoryFuture().join();
-
         UserOrderInformationDto userOrderInformationDto = new UserOrderInformationDto();
 
-        userOrderInformationDto.setOrder_number(orderEntity.getOrderNumber());
+        orderEntity.setClientName("Blank Name");
+        orderEntity.setClientSecondName("Blank SecondName");
+        orderEntity.setClientPhone("Blank Phone");
+        orderEntity.setClientEmail("Blank Email");
+        orderEntity.setProductName(inventoryServiceDtoConsumer.getTitle());
+        orderEntity.setProductId(userOrderCreationDto.getProductId());
+        orderEntity.setOrderTime(LocalDateTime.now());
+        orderEntity.setEstimatedDeliveryTime(LocalDateTime.now().plusDays(3));
+        orderEntity.setClientAddress("Blank Client Address");
+        orderEntity.setSendingAddress("Blank Sending Address");
+        orderEntity.setOrderNumber("Blank Order Number");
+        orderEntity.setPrice(inventoryServiceDtoConsumer.getPrice());
+
+        userOrderInformationDto.setOrder_number("Blank Order Number");
         userOrderInformationDto.setClient_address(orderEntity.getClientAddress());
         userOrderInformationDto.setManufacture(inventoryServiceDtoConsumer.getManufacture());
         userOrderInformationDto.setProduct_name(inventoryServiceDtoConsumer.getTitle());
         userOrderInformationDto.setPrice((double) inventoryServiceDtoConsumer.getPrice());
+
+        orderEntityRepository.save(orderEntity);
         return userOrderInformationDto;
     }
 
-    private void sendToOtherServices(OrderEntity orderEntity) {
+    private void sendToOtherServices(UserOrderCreationDto userOrderCreationDto, OrderEntity orderEntity) {
         CustomerServiceKafkaProducerThread customerServiceKafkaProducerThread =
                 new CustomerServiceKafkaProducerThread(customerServiceKafkaProducer);
         customerServiceKafkaProducerThread.sendToCustomerService(orderEntity);
 
         InventoryServiceKafkaProducerThread inventoryServiceKafkaProducerThread =
                 new InventoryServiceKafkaProducerThread(inventoryServiceKafkaProducer);
-        inventoryServiceKafkaProducerThread.sendToInventoryService(orderEntity);
+        inventoryServiceKafkaProducerThread.sendToInventoryService(userOrderCreationDto);
 
         NotificationServiceKafkaProducerThread notificationServiceKafkaProducerThread =
                 new NotificationServiceKafkaProducerThread(notificationServiceKafkaProducer);

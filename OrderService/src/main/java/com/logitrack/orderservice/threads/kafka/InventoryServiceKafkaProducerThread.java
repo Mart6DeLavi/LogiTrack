@@ -2,6 +2,7 @@ package com.logitrack.orderservice.threads.kafka;
 
 import com.logitrack.orderservice.configs.kafka.producer.InventoryServiceKafkaProducer;
 import com.logitrack.orderservice.data.entities.OrderEntity;
+import com.logitrack.orderservice.dtos.UserOrderCreationDto;
 import com.logitrack.orderservice.dtos.producer.InventoryServiceDtoProducer;
 import com.logitrack.orderservice.exceptions.kafka.InventoryServiceKafkaNotSentException;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +27,10 @@ public class InventoryServiceKafkaProducerThread {
     private static final String INVENTORY_TOPIC = "order-service-to-inventory-service";
 
     @Async
-    public void sendToInventoryService(OrderEntity orderEntity) {
+    public void sendToInventoryService(UserOrderCreationDto userOrderCreationDto) {
         Thread inventoryServiceKafkaProducerThread = new Thread(() -> {
             InventoryServiceDtoProducer inventoryServiceDtoProducer = new InventoryServiceDtoProducer();
-            inventoryServiceDtoProducer.setProduct_id(orderEntity.getProductId());
+            inventoryServiceDtoProducer.setProduct_id(userOrderCreationDto.getProductId());
            try {
                producer.sendToInventoryService(INVENTORY_TOPIC, inventoryServiceDtoProducer);
            } catch (RuntimeException ex) {

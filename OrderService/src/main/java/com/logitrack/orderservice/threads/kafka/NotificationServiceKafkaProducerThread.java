@@ -23,46 +23,6 @@ public class NotificationServiceKafkaProducerThread extends Thread {
 
     private static final String NOTIFICATION_TOPIC = "order-service-to-notification-service";
 
-//    /**
-//     * Запускает поток, который отправляет сообщение о заказе в сервис уведомлений через Kafka.
-//     *
-//     * <p>Этот метод переопределяет {@link Thread#run()} и вызывает {@link #sendMessage()} для отправки сообщения.
-//     * В случае возникновения исключения при отправке сообщения, оно логируется и пробрасывается как
-//     * {@link NotificationServiceKafkaNotSentException}.</p>
-//     */
-//    @Override
-//    public void run() {
-//        log.info("Notification service kafka producer thread started");
-//
-//        try {
-//            sendMessage();
-//        } catch (RuntimeException ex) {
-//            log.error("Notification service kafka producer thread failed", ex);
-//            throw new NotificationServiceKafkaNotSentException(ex.getMessage(), ex);
-//        }
-//
-//        log.info("Notification Service Finished");
-//    }
-//
-//    /**
-//     * Создает объект {@link NotificationServiceDto} из данных заказа и отправляет его в сервис уведомлений через Kafka.
-//     *
-//     * <p>Этот метод вызывает {@link NotificationServiceKafkaProducer#sendToNotificationService(String, NotificationServiceDto)}
-//     * для отправки сообщения. Если возникает исключение при отправке сообщения, оно пробрасывается как
-//     * {@link NotificationServiceKafkaNotSentException}.</p>
-//     */
-//    private void sendMessage() {
-//        NotificationServiceDto notificationServiceDto = new NotificationServiceDto();
-//
-//        notificationServiceDto.setProduct_name(orderEntity.getProductName());
-//        notificationServiceDto.setOrder_number(orderEntity.getOrderNumber());
-//
-//        try {
-//            producer.sendToNotificationService("order-service-to-notification-service", notificationServiceDto);
-//        } catch (RuntimeException ex) {
-//            throw new NotificationServiceKafkaNotSentException(ex.getMessage());
-//        }
-//    }
 
     @Async
     public void sendToNotificationService(OrderEntity orderEntity) {
