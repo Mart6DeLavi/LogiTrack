@@ -1,20 +1,14 @@
 package com.logitrack.orderservice.services;
 
 import com.logitrack.orderservice.configs.kafka.consumer.InventoryServiceKafkaConsumer;
-import com.logitrack.orderservice.configs.kafka.producer.CustomerServiceKafkaProducer;
-import com.logitrack.orderservice.configs.kafka.producer.InventoryServiceKafkaProducer;
-import com.logitrack.orderservice.configs.kafka.producer.NotificationServiceKafkaProducer;
-import com.logitrack.orderservice.configs.kafka.producer.PaymentsServiceKafkaProducer;
+import com.logitrack.orderservice.configs.kafka.producer.*;
 import com.logitrack.orderservice.data.entities.OrderEntity;
 import com.logitrack.orderservice.data.repositories.OrderEntityRepository;
 import com.logitrack.orderservice.dtos.UserOrderCreationDto;
 import com.logitrack.orderservice.dtos.UserOrderInformationDto;
 import com.logitrack.orderservice.dtos.consumer.InventoryServiceDtoConsumer;
 import com.logitrack.orderservice.exceptions.NoSuchOrderException;
-import com.logitrack.orderservice.threads.kafka.CustomerServiceKafkaProducerThread;
-import com.logitrack.orderservice.threads.kafka.InventoryServiceKafkaProducerThread;
-import com.logitrack.orderservice.threads.kafka.NotificationServiceKafkaProducerThread;
-import com.logitrack.orderservice.threads.kafka.PaymentsServiceKafkaProducerThread;
+import com.logitrack.orderservice.threads.kafka.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +30,7 @@ public class OrderService {
     private final InventoryServiceKafkaProducer inventoryServiceKafkaProducer;
     private final PaymentsServiceKafkaProducer paymentsServiceKafkaProducer;
     private final NotificationServiceKafkaProducer notificationServiceKafkaProducer;
+    private final ShippingServiceKafkaProducerThread shippingServiceKafkaProducerThread;
 
     private final InventoryServiceKafkaConsumer inventoryServiceKafkaConsumer;
 
@@ -103,6 +98,8 @@ public class OrderService {
         PaymentsServiceKafkaProducerThread paymentsServiceKafkaProducerThread =
                 new PaymentsServiceKafkaProducerThread(paymentsServiceKafkaProducer);
         paymentsServiceKafkaProducerThread.sendToPaymentsService(orderEntity);
+
+        shippingServiceKafkaProducerThread.sendToShippingService(orderEntity);
     }
 
 
