@@ -21,29 +21,18 @@ import org.springframework.stereotype.Service;
  * @see lombok.RequiredArgsConstructor
  * @see lombok.extern.slf4j.Slf4j
  */
-@Service
-@RequiredArgsConstructor
 @Slf4j
-public class NotificationServiceKafkaProducer {
-
+@Service
+public class NotificationServiceKafkaProducer implements KafkaProducer<NotificationServiceDtoProducer> {
     private final KafkaTemplate<String, NotificationServiceDtoProducer> kafkaTemplate;
 
-    /**
-     * Отправляет сообщение в указанный Kafka-топик.
-     *
-     * <p>Метод использует {@link KafkaTemplate} для отправки сообщения в указанный топик. После отправки сообщения
-     * производится логирование, чтобы отслеживать, какие сообщения были отправлены и в какие топики.</p>
-     *
-     * <p>Обратите внимание, что {@code message} приводится к строке перед отправкой. Если {@code message} не является
-     * строкой, это может привести к {@link ClassCastException}.</p>
-     *
-     * @param topic   Название Kafka-топика, в который будет отправлено сообщение.
-     * @param message Сообщение, которое необходимо отправить в Kafka. Оно приводится к строке перед отправкой.
-     * @throws ClassCastException если {@code message} не может быть приведено к строке.
-     */
-    public void sendToNotificationService(String topic,
-                                          NotificationServiceDtoProducer message) {
-        kafkaTemplate.send(topic, message);
-        log.info("Sent: {} to topic: {}", message, topic);
+    public NotificationServiceKafkaProducer(KafkaTemplate<String, NotificationServiceDtoProducer> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    @Override
+    public void sendToKafka(String topic, NotificationServiceDtoProducer value) {
+        kafkaTemplate.send(topic, value);
+        log.info("Message sent to kafka topic: {}", topic);
     }
 }

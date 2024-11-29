@@ -7,7 +7,9 @@ import com.logitrack.orderservice.data.repositories.OrderEntityRepository;
 import com.logitrack.orderservice.dtos.UserOrderCreationDto;
 import com.logitrack.orderservice.dtos.UserOrderInformationDto;
 import com.logitrack.orderservice.dtos.consumer.InventoryServiceDtoConsumer;
+import com.logitrack.orderservice.dtos.producer.*;
 import com.logitrack.orderservice.exceptions.NoSuchOrderException;
+import com.logitrack.orderservice.mapps.*;
 import com.logitrack.orderservice.threads.kafka.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,13 +28,32 @@ import java.util.List;
 public class OrderService {
     private final OrderEntityRepository orderEntityRepository;
 
+    private final UniversalKafkaProducerThread<CustomerServiceDtoProducer> customerServiceDtoProducerUniversalKafkaProducerThread;
+    private final UniversalKafkaProducerThread<InventoryServiceDtoProducer> inventoryServiceDtoProducerUniversalKafkaProducerThread;
+    private final UniversalKafkaProducerThread<NotificationServiceDtoProducer> notificationServiceDtoProducerUniversalKafkaProducerThread;
+    private final UniversalKafkaProducerThread<PaymentsServiceDtoProducer> paymentsServiceDtoProducerUniversalKafkaProducerThread;
+    private final UniversalKafkaProducerThread<ShippingServiceDtoProducer> shippingServiceDtoProducerUniversalKafkaProducerThread;
+
     private final CustomerServiceKafkaProducer customerServiceKafkaProducer;
     private final InventoryServiceKafkaProducer inventoryServiceKafkaProducer;
-    private final PaymentsServiceKafkaProducer paymentsServiceKafkaProducer;
     private final NotificationServiceKafkaProducer notificationServiceKafkaProducer;
-    private final ShippingServiceKafkaProducerThread shippingServiceKafkaProducerThread;
+    private final PaymentsServiceKafkaProducer paymentsServiceKafkaProducer;
+    private final ShippingServiceKafkaProducer shippingServiceKafkaProducer;
+
+    private final CustomerServiceDtoMapper customerServiceDtoMapper;
+    private final InventoryServiceDtoMapper inventoryServiceDtoMapper;
+    private final NotificationServiceDtoMapper notificationServiceDtoMapper;
+    private final PaymentsServiceDtoMapper paymentsServiceDtoMapper;
+    private final ShippingServiceDtoMapper shippingServiceDtoMapper;
 
     private final InventoryServiceKafkaConsumer inventoryServiceKafkaConsumer;
+
+
+    private static final String CUSTOMER_TOPIC = "order-service-to-customer-service";
+    private static final String INVENTORY_TOPIC = "order-service-to-inventory-service";
+    private static final String NOTIFICATION_TOPIC = "order-service-to-notification-service";
+    private static final String PAYMENTS_TOPIC = "order-service-to-payment-service";
+    private static final String SHIPPING_TOPIC = "order-service-to-shipping-service";
 
     /**
      * Возвращает список всех заказов.
@@ -83,23 +104,40 @@ public class OrderService {
     }
 
     private void sendToOtherServices(UserOrderCreationDto userOrderCreationDto, OrderEntity orderEntity) {
-        CustomerServiceKafkaProducerThread customerServiceKafkaProducerThread =
-                new CustomerServiceKafkaProducerThread(customerServiceKafkaProducer);
-        customerServiceKafkaProducerThread.sendToCustomerService(orderEntity);
+        customerServiceDtoProducerUniversalKafkaProducerThread.sendToKafka(
+                orderEntity,
+                CUSTOMER_TOPIC,
+                customerServiceKafkaProducer,
+                customerServiceDtoMapper::map
+        );
 
-        InventoryServiceKafkaProducerThread inventoryServiceKafkaProducerThread =
-                new InventoryServiceKafkaProducerThread(inventoryServiceKafkaProducer);
-        inventoryServiceKafkaProducerThread.sendToInventoryService(userOrderCreationDto);
+        inventoryServiceDtoProducerUniversalKafkaProducerThread.sendToKafka(
+                orderEntity,
+                INVENTORY_TOPIC,
+                inventoryServiceKafkaProducer,
+                order -> inventoryServiceDtoMapper.map(userOrderCreationDto)
+        );
 
-        NotificationServiceKafkaProducerThread notificationServiceKafkaProducerThread =
-                new NotificationServiceKafkaProducerThread(notificationServiceKafkaProducer);
-        notificationServiceKafkaProducerThread.sendToNotificationService(orderEntity);
+        notificationServiceDtoProducerUniversalKafkaProducerThread.sendToKafka(
+                orderEntity,
+                NOTIFICATION_TOPIC,
+                notificationServiceKafkaProducer,
+                notificationServiceDtoMapper::map
+        );
 
-        PaymentsServiceKafkaProducerThread paymentsServiceKafkaProducerThread =
-                new PaymentsServiceKafkaProducerThread(paymentsServiceKafkaProducer);
-        paymentsServiceKafkaProducerThread.sendToPaymentsService(orderEntity);
+        paymentsServiceDtoProducerUniversalKafkaProducerThread.sendToKafka(
+                orderEntity,
+                PAYMENTS_TOPIC,
+                paymentsServiceKafkaProducer,
+                paymentsServiceDtoMapper::map
+        );
 
-        shippingServiceKafkaProducerThread.sendToShippingService(orderEntity);
+        shippingServiceDtoProducerUniversalKafkaProducerThread.sendToKafka(
+                orderEntity,
+                SHIPPING_TOPIC,
+                shippingServiceKafkaProducer,
+                shippingServiceDtoMapper::map
+        );
     }
 
 
