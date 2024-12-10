@@ -1,4 +1,4 @@
-package com.logitrack.shippingservice.configs;
+package com.logitrack.shippingservice.configs.database;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
